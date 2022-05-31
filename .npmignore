@@ -1,0 +1,5 @@
+.gitattributes
+docker-compose.yml
+src/
+pgdata/
+*.tgz

@@ -1,0 +1,22 @@
+{
+  "name": "@wellenplan/wellenplan",
+  "version": "0.0.0",
+  "dependencies": {
+    "@wellenplan/directus-extension-duration-display": "^0.1.6",
+    "@wellenplan/directus-extension-duration-interface": "^0.1.5",
+    "@wellenplan/directus-extension-hourclock-interface": "^0.1.5",
+    "@wellenplan/directus-extension-hourclock-module": "^0.1.1",
+    "@wellenplan/directus-extension-wellenplan-hook": "^0.1.4",
+    "directus": "^9.11.1",
+    "pg": "^8.7.3"
+  },
+  "scripts": {
+    "automigrate": "directus-auto-migrate --migrationsDir src/extensions/migrations --stateFile src/directus-state.json",
+    "bootstrap": "directus bootstrap",
+    "start": "directus start",
+    "start:dev": "EXTENSIONS_AUTO_RELOAD=true directus start"
+  },
+  "devDependencies": {
+    "directus-auto-migrate": "^0.3.2"
+  }
+}

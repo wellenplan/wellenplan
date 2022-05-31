@@ -1,0 +1,7 @@
+pgdata/
+node_modules/
+*.tgz
+.github
+src/extensions/
+!src/extensions/migrations/
+.env

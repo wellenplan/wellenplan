@@ -1,0 +1,5 @@
+node_modules/
+*.sqlite3
+src/extensions/*
+!src/extensions/migrations
+*.tgz
