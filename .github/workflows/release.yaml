@@ -21,7 +21,7 @@ jobs:
           echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
       - name: Docker meta
-        id: docker_meta
+        id: meta
         uses: docker/metadata-action@v4.0.1
         with:
           images: ghcr.io/wellenplan/wellenplan
