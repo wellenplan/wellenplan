@@ -590,7 +590,7 @@ module.exports = {
           icon: "bookmark_outline",
           layout: "tabular",
           layout_options: '{"tabular":{"widths":{"status":32}}}',
-          layout_query: '{"tabular":{"fields":["status","show_episode.show.show_name","show_episode.episode_title","name","slices"]}}',
+          layout_query: '{"tabular":{"fields":["status","show_episode.show.show_name","show_episode.episode_name","name","slices"]}}',
         }
       ]);
     });
