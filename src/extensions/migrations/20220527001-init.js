@@ -432,7 +432,17 @@ module.exports = {
           interface: "input",
           required: true,
           sort: 8,
-          width: "true",
+          width: "half",
+        },
+        {
+          collection: "wellenplan_hourclocks",
+          field: "show_episode",
+          display: "related-values",
+          display_options: '{"template":"{{show.show_name}}: {{episode_name}}"}',
+          interface: "select-dropdown-m2o",
+          sort: 9,
+          special: "m2o",
+          width: "half",
         },
         {
           collection: "wellenplan_hourclocks",
@@ -440,17 +450,9 @@ module.exports = {
           display: "related-values",
           display_options: '{"template":"{{color}}{{title}} ({{duration}})"}',
           interface: "hour-clocks-interface",
-          options: '{"enableCreate":false,"enableSelect":false}',
-          sort: 9,
-          special: "o2m",
-          width: "full",
-        },
-        {
-          collection: "wellenplan_hourclocks",
-          field: "show_episode",
-          interface: "select-dropdown-m2o",
+          options: '{"enableCreate":true,"enableSelect":false}',
           sort: 10,
-          special: "m2o",
+          special: "o2m",
           width: "full",
         },
         {
@@ -564,7 +566,7 @@ module.exports = {
           storage_asset_transform: "all",
           module_bar: '[{"type":"module","id":"content","enabled":true},{"type":"module","id":"users","enabled":true},{"type":"module","id":"files","enabled":true},{"type":"module","id":"insights","enabled":true},{"type":"module","id":"docs","enabled":true},{"type":"module","id":"settings","enabled":true,"locked":true},{"type":"module","id":"hourclock","enabled":true}]',
           project_descriptor: "Broadcast Management",
-          default_language: "en_US",
+          default_language: "en-US",
 
         }
       ])
