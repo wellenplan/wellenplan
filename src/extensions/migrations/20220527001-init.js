@@ -213,10 +213,10 @@ module.exports = {
           field: "episodes",
           display: "related-values",
           display_options:
-            '{"template":"{{episode_title}} ({{start}} - {{end}})"}',
+            '{"template":"{{episode_name}} ({{start}} - {{end}})"}',
           interface: "list-o2m",
           options:
-            '{"enableSelect":false,"template":"{{episode_title}} ({{start}} - {{end}})"}',
+            '{"enableSelect":false,"template":"{{episode_name}} ({{start}} - {{end}})"}',
           sort: 8,
           special: "o2m",
           width: "full",
@@ -582,8 +582,8 @@ module.exports = {
           collection: "wellenplan_show_episodes",
           icon: "calendar_month",
           layout: "calendar",
-          layout_options: '{"calendar":{"viewInfo":{"type":"timeGridWeek"},"startDateField":"start","endDateField":"end","firstDay":1,"template":"{{show.show_name}}: {{episode_title}}"}}',
-          layout_query: '{"tabular":{"fields":["status","show.show_name","episode_title","start","end"]}}',
+          layout_options: '{"calendar":{"viewInfo":{"type":"timeGridWeek"},"startDateField":"start","endDateField":"end","firstDay":1,"template":"{{show.show_name}}: {{episode_name}}"}}',
+          layout_query: '{"tabular":{"fields":["status","show.show_name","episode_name","start","end"]}}',
         },
         {
           collection: "wellenplan_hourclocks",
