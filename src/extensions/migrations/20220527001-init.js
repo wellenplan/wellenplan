@@ -3,55 +3,63 @@ module.exports = {
   async up(knex) {
     await knex.transaction(async (transaction) => {
       await transaction.schema.createTable("wellenplan_shows", (table) => {
-        table.uuid("id").notNullable().primary();
+        // CockroachDB will create a `rowid` primary key if it isn't happy with
+        // the primary key created by `table.uuid("id").primary().noNullable()`
+        // so we use `table.speicificType("id", "UUID PRIMARY KEY")` instead.
+        // This can be removed once the primary key created by knex is properly
+        // recognized by CockroachDB or knex' sql dialect takes this into
+        // account.
+        table.specificType("id", "UUID PRIMARY KEY");
         table.string("status").notNullable().defaultTo("draft");
         table.uuid("user_created");
-        table.foreign("user_created").references("directus_users.id");
+        table.foreign("user_created").references("id").inTable("directus_users").onDelete('SET NULL');
         table.datetime("date_created").defaultTo(knex.fn.now());
         table.uuid("user_updated");
-        table.foreign("user_updated").references("directus_users.id");
+        table.foreign("user_updated").references("id").inTable("directus_users").onDelete('SET NULL');
         table.datetime("date_updated");
         table.string("show_name").defaultTo("NULL");
       });
       await transaction.schema.createTable(
         "wellenplan_show_episodes",
         (table) => {
-          table.uuid("id").notNullable().primary();
+          // workaround for CockroachDB creating a `rowid`, see above for explanation
+          table.specificType("id", "UUID PRIMARY KEY");
           table.string("status").notNullable().defaultTo("draft");
           table.integer("sort");
           table.uuid("user_created");
-          table.foreign("user_created").references("directus_users.id");
+          table.foreign("user_created").references("id").inTable("directus_users").onDelete('SET NULL');
           table.datetime("date_created").defaultTo(knex.fn.now());
           table.uuid("user_updated");
-          table.foreign("user_updated").references("directus_users.id");
+          table.foreign("user_updated").references("id").inTable("directus_users").onDelete('SET NULL');
           table.datetime("date_updated");
           table.uuid("show");
-          table.foreign("show").references("wellenplan_shows.id");
+          table.foreign("show").references("id").inTable("wellenplan_shows").onDelete('CASCADE');
           table.string("episode_name").defaultTo("NULL");
           table.datetime("start");
           table.datetime("end");
         }
       );
       await transaction.schema.createTable("wellenplan_hourclocks", (table) => {
-        table.uuid("id").notNullable().primary();
+        // workaround for CockroachDB creating a `rowid`, see above for explanation
+        table.specificType("id", "UUID PRIMARY KEY");
         table.string("status").notNullable().defaultTo("draft");
         table.integer("sort");
         table.uuid("user_created");
-        table.foreign("user_created").references("directus_users.id");
+        table.foreign("user_created").references("id").inTable("directus_users").onDelete('SET NULL');
         table.datetime("date_created").defaultTo(knex.fn.now());
         table.uuid("user_updated");
-        table.foreign("user_updated").references("directus_users.id");
+        table.foreign("user_updated").references("id").inTable("directus_users").onDelete('SET NULL');
         table.datetime("date_updated");
         table.string("name").defaultTo("NULL");
         table.uuid("show_episode");
-        table.foreign("show_episode").references("wellenplan_show_episodes.id");
+        table.foreign("show_episode").references("id").inTable("wellenplan_show_episodes").onDelete('CASCADE');
       });
       await transaction.schema.createTable(
         "wellenplan_hourclock_slices",
         (table) => {
           table.increments("id");
           table.uuid("hourclock");
-          table.foreign("hourclock").references("wellenplan_hourclocks.id");
+          table.foreign("hourclock").references("id").inTable("wellenplan_hourclocks").onDelete('CASCADE');
           table.integer("sort");
           table.string("title");
           table.integer("duration");
