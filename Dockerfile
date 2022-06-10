@@ -1,11 +1,11 @@
-FROM registry.access.redhat.com/ubi9/nodejs-16:1-36 AS builder
+FROM registry.access.redhat.com/ubi9/nodejs-16:1-37.1654147900 AS builder
 
 ADD --chown=1001:0 ./ $HOME
 
 RUN npm install \
  && mkdir -p $HOME/src/extensions/{displays,endpoints,hooks,interfaces,layouts,migrations,modules,operations,panels}
 
-FROM registry.access.redhat.com/ubi9/nodejs-16-minimal:1-42
+FROM registry.access.redhat.com/ubi9/nodejs-16-minimal:1-43.1653913680
 
 ENV EXTENSIONS_PATH="$HOME/src/extensions"
 
