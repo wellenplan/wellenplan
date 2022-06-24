@@ -4,7 +4,7 @@
   "dependencies": {
     "@wellenplan/directus-extension-duration-display": "^0.1.10",
     "@wellenplan/directus-extension-duration-interface": "^0.1.8",
-    "@wellenplan/directus-extension-hourclock-interface": "^0.1.8",
+    "@wellenplan/directus-extension-hourclock-interface": "^0.1.10",
     "@wellenplan/directus-extension-hourclock-module": "^0.1.6",
     "@wellenplan/directus-extension-wellenplan-hook": "^0.1.6",
     "directus": "^9.12.2",
