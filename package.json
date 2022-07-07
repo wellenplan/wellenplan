@@ -5,7 +5,7 @@
     "@wellenplan/directus-extension-duration-display": "^0.1.11",
     "@wellenplan/directus-extension-duration-interface": "^0.1.9",
     "@wellenplan/directus-extension-hourclock-interface": "^0.1.12",
-    "@wellenplan/directus-extension-hourclock-module": "^0.1.8",
+    "@wellenplan/directus-extension-hourclock-module": "^0.1.9",
     "@wellenplan/directus-extension-wellenplan-hook": "^0.1.7",
     "directus": "^9.13.0",
     "pg": "^8.7.3"
