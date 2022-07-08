@@ -7,7 +7,7 @@
     "@wellenplan/directus-extension-hourclock-interface": "^0.1.13",
     "@wellenplan/directus-extension-hourclock-module": "^0.1.9",
     "@wellenplan/directus-extension-wellenplan-hook": "^0.1.8",
-    "directus": "^9.14.0",
+    "directus": "^9.14.1",
     "pg": "^8.7.3"
   },
   "scripts": {
