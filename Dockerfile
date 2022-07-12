@@ -9,6 +9,8 @@ FROM registry.access.redhat.com/ubi9/nodejs-16-minimal:1-50
 
 ENV EXTENSIONS_PATH="$HOME/src/extensions"
 
+COPY LICENSE /licenses/
+
 COPY --from=builder --chown=0:0 $HOME $HOME
 
 CMD npm run -d start
