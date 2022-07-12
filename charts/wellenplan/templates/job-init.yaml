@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "wellenplan.fullname" . }}-init
+  labels:
+    {{- include "wellenplan.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "wellenplan.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
+      containers:
+        - name: {{ .Chart.Name }}-init
+          command: ['npm', 'run', 'bootstrap']
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "wellenplan.fullname" . }}
+            {{- if .Values.secret.enabled }}
+            - secretRef:
+                name: {{ include "wellenplan.fullname" . }}
+            {{- end }}
+          volumeMounts:
+          {{- if .Values.cockroachdb.enabled }}
+            - name: cockroachdb-client-id
+              mountPath: /var/run/secrets/cockroachdb-client-secret
+              readOnly: true
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      {{- if .Values.cockroachdb.enabled }}
+        - name: cockroachdb-client-id
+          secret:
+            secretName: {{ tpl .Values.secret.db.clientSecretName . }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

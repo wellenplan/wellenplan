@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "wellenplan.fullname" . }}
+  labels:
+    {{- include "wellenplan.labels" . | nindent 4 }}
+data:
+  # database
+  DB_CLIENT: {{ .Values.env.db.client | quote }}
+  DB_HOST: {{ .Values.env.db.host | quote }}
+  DB_PORT: {{ .Values.env.db.port | quote }}
+  DB_DATABASE: {{ .Values.env.db.database | quote }}
+  DB_USER: {{ .Values.env.db.user | quote }}
+  {{- with .Values.env.db.filename }}
+  DB_FILENAME: {{ . | quote }}
+  {{- end }}
+  {{- if .Values.cockroachdb.enabled }}
+  DB_SSL__REJECT_UNAUTHORIZED: "false"
+  DB_SSL__CA_FILE: /var/run/secrets/cockroachdb-client-secret/ca.crt
+  {{- end }}
+  # rate limiter
+  RATE_LIMITER_ENABLED: {{ .Values.env.rateLimiter.enabled | quote }}
+  {{- if .Values.env.rateLimiter.enabled }}
+  RATE_LIMITER_POINTS: {{ .Values.env.rateLimiter.points | quote }}
+  RATE_LIMITER_DURATION: {{ .Values.env.rateLimiter.duration | quote }}
+  {{- with .Values.env.rateLimiter.store }}
+  RATE_LIMITER_STORE: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.env.rateLimiter.host }}
+  RATE_LIMITER_REDIS_HOST: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.env.rateLimiter.port }}
+  RATE_LIMITER_REDIS_PORT: {{ . | quote }}
+  {{- end }}
+  {{- end }}
+  # cache
+  CACHE_ENABLED: {{ .Values.env.cache.enabled | quote }}
+  {{- if .Values.env.cache.enabled }}
+  {{- with .Values.env.cache.store }}
+  CACHE_STORE: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.env.cache.host }}
+  CACHE_REDIS_HOST: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.env.cache.port }}
+  CACHE_REDIS_PORT: {{ . | quote }}
+  {{- end }}
+  {{- end }}
+  # storage
+  STORAGE_LOCATION: {{ .Values.env.storage.locations }}
+  {{- with .Values.env.storage.minio }}
+  STORAGE_MINIO_DRIVER: s3
+  {{- with .key }}
+  STORAGE_MINIO_KEY: {{ . | quote }}
+  {{- end }}
+  {{- with .bucket }}
+  STORAGE_MINIO_BUCKET: {{ . | quote }}
+  {{- end }}
+  {{- with .region }}
+  STORAGE_MINIO_REGION: {{ . | quote }}
+  {{- end }}
+  {{- with .endpoint }}
+  STORAGE_MINIO_ENDPOINT: {{ . | quote }}
+  {{- end }}
+  {{- end }}
+  # security
+  KEY: {{ default uuidv4 .Values.env.security.key | quote }}
+  # extra environment variables
+  {{- with .Values.env.extraEnv }}
+  {{- . | toYaml | nindent 2 }}
+  {{- end }}

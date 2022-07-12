@@ -1,0 +1,28 @@
+apiVersion: v2
+name: wellenplan
+description: Wellenplan on Kubernetes
+type: application
+# These versions get automagically set during the release process
+version: 0.0.0
+appVersion: "v0.0.0"
+home: https://wellenplan.io
+sources:
+  - https://github.com/wellenplan/wellenplan
+maintainers:
+  - name: wellenplan
+    url: https://wellenplan.io
+dependencies:
+  - name: cockroachdb
+    version: ~8.1.3
+    repository: https://charts.cockroachdb.com/
+    condition: cockroachdb.enabled
+  - name: keydb
+    version: ~0.41.0
+    repository: https://enapter.github.io/charts/
+    condition: keydb.enabled
+  - name: minio
+    version: ~4.0.5
+    repository: https://charts.min.io/
+    condition: minio.enabled
+annotations:
+  charts.openshift.io/name: Wellenplan

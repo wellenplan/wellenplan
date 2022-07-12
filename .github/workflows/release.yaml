@@ -51,7 +51,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build and push
+      - name: Build container image
         id: docker_build_ghcr
         uses: docker/build-push-action@v3
         with:
@@ -90,7 +90,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push Container Image
+      - name: Push container image
         id: docker_push
         uses: docker/build-push-action@v3
         with:
@@ -105,3 +105,67 @@ jobs:
             version=${{ steps.meta.outputs.version }}
             org.opencontainers.image.version=${{ steps.prep.outputs.version }}
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v2.1
+        with:
+          version: v3.9.0
+
+      - name: Update version in Helm chart
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: mikefarah/yq@v4.25.2
+        with:
+          cmd: yq eval '(.appVersion = "v${{ steps.meta.outputs.version }}") | (.version = "${{ steps.meta.outputs.version }}")' -i charts/wellenplan/Chart.yaml
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.2.1
+        with:
+          version: v3.6.0
+
+      - name: Run chart-testing (lint)
+        run: ct --config .github/ct.yaml lint
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.3.0
+
+      - name: Prepare kind cluster
+        run: |
+          kubectl create namespace wellenplan
+
+      - name: Load container image
+        run: kind load docker-image --name chart-testing 'ghcr.io/wellenplan/wellenplan:${{ steps.meta.outputs.version }}'
+
+      - name: Run chart-testing (install)
+        run: ct install --config=.github/ct.yaml --helm-extra-set-args '--set=image.tag=${{ steps.meta.outputs.version }} --timeout 30m0s'
+
+      - name: Set up chart-releaser
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: helm/chart-releaser-action@v1.4.0
+        with:
+          install_only: true
+
+      - name: Package helm chart
+        run: |
+          cr package charts/wellenplan
+
+      - name: Upload Helm chart
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          cr upload --skip-existing -o wellenplan -r wellenplan/helm-charts --token ${{ secrets.ORGA_USER_TOKEN }} -p .cr-release-packages
+
+      - name: Index Helm chart
+        run: |
+          cr index -o wellenplan -r wellenplan/helm-charts -c https://charts.wellenplan.io/ -i index.yaml
+
+      - name: Push index file
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: dmnemec/copy_file_to_another_repo_action@v1.1.1
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.ORGA_USER_TOKEN }}
+        with:
+          source_file: index.yaml
+          destination_repo: wellenplan/helm-charts
+          destination_folder: .
+          destination_branch: gh-pages
+          user_email: wellenplan-bot@users.noreply.github.com
+          user_name: wellenplan-bot
