@@ -1,0 +1,9 @@
+charts:
+  - charts/wellenplan
+chart-repos:
+  - cockroachdb=https://charts.cockroachdb.com
+  - enapter=https://enapter.github.io/charts
+  - minio=https://charts.min.io
+check-version-increment: false
+namespace: wellenplan
+release-label: wellenplan
