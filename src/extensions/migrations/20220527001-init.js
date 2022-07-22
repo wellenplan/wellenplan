@@ -3,13 +3,7 @@ module.exports = {
   async up(knex) {
     await knex.transaction(async (transaction) => {
       await transaction.schema.createTable("wellenplan_shows", (table) => {
-        // CockroachDB will create a `rowid` primary key if it isn't happy with
-        // the primary key created by `table.uuid("id").primary().noNullable()`
-        // so we use `table.speicificType("id", "UUID PRIMARY KEY")` instead.
-        // This can be removed once the primary key created by knex is properly
-        // recognized by CockroachDB or knex' sql dialect takes this into
-        // account.
-        table.specificType("id", "UUID PRIMARY KEY");
+        table.uuid("id").primary().noNullable();
         table.string("status").notNullable().defaultTo("draft");
         table.uuid("user_created");
         table.foreign("user_created").references("id").inTable("directus_users").onDelete('SET NULL');
@@ -22,8 +16,7 @@ module.exports = {
       await transaction.schema.createTable(
         "wellenplan_show_episodes",
         (table) => {
-          // workaround for CockroachDB creating a `rowid`, see above for explanation
-          table.specificType("id", "UUID PRIMARY KEY");
+          table.uuid("id").primary().noNullable();
           table.string("status").notNullable().defaultTo("draft");
           table.integer("sort");
           table.uuid("user_created");
@@ -40,8 +33,7 @@ module.exports = {
         }
       );
       await transaction.schema.createTable("wellenplan_hourclocks", (table) => {
-        // workaround for CockroachDB creating a `rowid`, see above for explanation
-        table.specificType("id", "UUID PRIMARY KEY");
+        table.uuid("id").primary().noNullable();
         table.string("status").notNullable().defaultTo("draft");
         table.integer("sort");
         table.uuid("user_created");
