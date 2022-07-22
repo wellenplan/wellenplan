@@ -3,7 +3,7 @@ module.exports = {
   async up(knex) {
     await knex.transaction(async (transaction) => {
       await transaction.schema.createTable("wellenplan_shows", (table) => {
-        table.uuid("id").primary().noNullable();
+        table.uuid("id").primary().notNullable();
         table.string("status").notNullable().defaultTo("draft");
         table.uuid("user_created");
         table.foreign("user_created").references("id").inTable("directus_users").onDelete('SET NULL');
@@ -16,7 +16,7 @@ module.exports = {
       await transaction.schema.createTable(
         "wellenplan_show_episodes",
         (table) => {
-          table.uuid("id").primary().noNullable();
+          table.uuid("id").primary().notNullable();
           table.string("status").notNullable().defaultTo("draft");
           table.integer("sort");
           table.uuid("user_created");
@@ -33,7 +33,7 @@ module.exports = {
         }
       );
       await transaction.schema.createTable("wellenplan_hourclocks", (table) => {
-        table.uuid("id").primary().noNullable();
+        table.uuid("id").primary().notNullable();
         table.string("status").notNullable().defaultTo("draft");
         table.integer("sort");
         table.uuid("user_created");
