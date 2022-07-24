@@ -6,3 +6,4 @@ src/extensions/
 !src/extensions/migrations/
 .env
 *.sarif
+charts/
