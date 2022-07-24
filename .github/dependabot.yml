@@ -11,10 +11,10 @@ updates:
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "fix(deps): "
+      prefix: "chore(deps): "
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "feat: "
+      prefix: "fix: "
