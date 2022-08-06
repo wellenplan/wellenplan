@@ -2,7 +2,7 @@
   "name": "@wellenplan/wellenplan",
   "version": "0.0.0",
   "dependencies": {
-    "@wellenplan/directus-extension-duration-display": "^0.1.14",
+    "@wellenplan/directus-extension-duration-display": "^0.1.15",
     "@wellenplan/directus-extension-duration-interface": "^0.1.13",
     "@wellenplan/directus-extension-hourclock-interface": "^0.1.16",
     "@wellenplan/directus-extension-hourclock-module": "^0.1.12",
