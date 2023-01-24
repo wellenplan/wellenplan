@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/nodejs-16:1-75 AS builder
+FROM registry.access.redhat.com/ubi9/nodejs-16:1-84 AS builder
 
 ADD --chown=1001:0 ./ $HOME
 
