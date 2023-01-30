@@ -8,7 +8,7 @@
     "@wellenplan/directus-extension-hourclock-module": "^0.1.15",
     "@wellenplan/directus-extension-wellenplan-hook": "^0.1.13",
     "directus": "^9.16.1",
-    "pg": "^8.8.0"
+    "pg": "^8.9.0"
   },
   "scripts": {
     "automigrate": "directus-auto-migrate --migrationsDir src/extensions/migrations --stateFile src/directus-state.json",
