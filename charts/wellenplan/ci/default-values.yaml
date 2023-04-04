@@ -1,0 +1,18 @@
+env:
+  rateLimiter:
+    enabled: false
+  cache:
+    enabled: false
+  storage:
+    locations: local
+
+cockroachdb:
+  enabled: true
+  statefulset:
+    replicas: 1
+  conf:
+    single-node: true
+keydb:
+  enabled: false
+minio:
+  enabled: false

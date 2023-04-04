@@ -1,0 +1,223 @@
+# -- Amount of main Wellenplan Pods to be started.
+replicaCount: 1
+
+image:
+  # -- Wellenplan container image.
+  repository: ghcr.io/wellenplan/wellenplan
+  # -- Image pullPolicy, may be Always or IfNotPresent.
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# -- Inject secrets you need to pull a local fork of the Wellenplan container image.
+imagePullSecrets: []
+# -- Override the `name` part of `metadata.name`.
+nameOverride: ""
+# -- Override all of `metadata.name` and other derived values.
+fullnameOverride: ""
+
+serviceAccount:
+  # -- Specifies whether a service account should be created.
+  create: true
+  # -- Annotations to add to the service account.
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# -- Specify additional annotations for the Wellenplan Pod.
+podAnnotations: {}
+
+# -- Configure a Pod security context for Wellenplan.
+# It is recommended to set a sensible fsGroup (ie. `{"fsGroup": 2000}`).
+podSecurityContext: {}
+
+securityContext:
+  # -- Wellenplan drops all capabilities out of the box.
+  # @default -- drop `ALL`
+  capabilities:
+    drop:
+    - ALL
+  # -- The Wellenplan root filesystem is ephemeral.
+  readOnlyRootFilesystem: true
+  # -- Wellenplan does not run as uid=0 (root).
+  runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  # -- How to expose Wellenplan in your cluster.
+  type: ClusterIP
+  # -- Port that Wellenplan is reachable on in your cluster.
+  # Gets mapped to 8055 in the container.
+  port: 80
+
+ingress:
+  # -- Enable Ingress creation.
+  enabled: false
+  # -- Choose an Ingress class name.
+  className: ""
+  # -- Annotate you Ingress resource.
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    -
+      # -- Set Wellenplan hostname.
+      host: chart-example.local
+      # -- Configure subpath for Wellenplan installation.
+      # It's recommended to host Wellenplan on it's own subdomain and not touch this.
+      # @default -- `/`
+      paths:
+        - path: /
+          pathType: Prefix
+  # -- Configure TLS for Ingress resource.
+  # It's preferrable for your Ingress controller to just default to TLS everywhere and leave this empty.
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  # -- Enable autoscaling Wellenplan.
+  # See `values.yaml` for further knobs that need tuning for autoscaling.
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  db:
+    # -- `DB_CLIENT` env variable
+    client: cockroachdb
+    # -- `DB_HOST` env variable
+    host: cockroachdb
+    # -- `DB_PORT` env variable
+    port: 26257
+    # -- `DB_DATABASE` env variable
+    database: wellenplan
+    # -- `DB_USER` env variable
+    user: wellenplan
+    # -- `DB_FILENAME` env variable. Used for testing.
+    filename: ""
+  rateLimiter:
+    # -- `RATE_LIMITER_ENABLED` env variable
+    enabled: true
+    # -- `RATE_LIMITER_POINTS` env variable
+    points: 25
+    # -- `RATE_LIMITER_DURATION` env variable
+    duration: 1
+    # -- `RATE_LIMITER_STORE` env variable
+    store: redis
+    # -- `RATE_LIMITER_REDIS_HOST` env variable
+    host: keydb
+    # -- `RATE_LIMITER_REDIS_PORT` env variable
+    port: 6379
+  cache:
+    # -- `CACHE_ENABLED` env variable
+    enabled: true
+    # -- `CACHE_STORE` env variable
+    store: redis
+    # -- `CACHE_REDIS_HOST` env variable
+    host: keydb
+    # -- `CACHE_REDIS_PORT` env variable
+    port: 6379
+  storage:
+    # -- `STORAGE_LOCATIONS` env variable
+    locations: minio
+    minio:
+      key: wellenplan
+      bucket: wellenplan
+      region: earth
+      endpoint: minio
+  security:
+    # -- `KEY` env variable
+    key: ""
+  # -- Configure extra raw environment variables for Wellenplan.
+  extraEnv: {}
+
+secret:
+  # -- Enable Secret creation.
+  # Creating Secrets with Helm is **NOT RECOMMENDED FOR PRODUCTION**.
+  enabled: true
+  db:
+    # -- `DB_PASSWORD` env variable.
+    password: changeme
+    # -- Name of db client secret
+    clientSecretName: cockroachdb-client-secret
+  rateLimiter:
+    # -- `RATE_LIMITER_REDIS_PASSWORD` env variable.
+    password: changeme
+  cache:
+    # -- `CACHE_REDIS_PASSWORD` env variable.
+    password: changeme
+  storage:
+    minio:
+      secret: changeme
+  security:
+    # -- SECRET env variable.
+    secret: ""
+  extraSecrets: {}
+
+cockroachdb:
+  # -- Enable CockroachDB.
+  # The default CockroachDB deployment is **NOT RECOMMENDED FOR PRODUCTION**.
+  enabled: true
+  fullnameOverride: cockroachdb
+  init:
+    provisioning:
+      enabled: true
+      users:
+        - name: wellenplan
+          password: changeme
+          options:
+            - LOGIN
+      databases:
+        - name: wellenplan
+          owners:
+            - wellenplan
+
+keydb:
+  # -- Enable KeyDB.
+  # The default KeyDB deployment is **NOT RECOMMENDED FOR PRODUCTION**.
+  enabled: true
+  fullnameOverride: keydb
+  # -- KeyDB password
+  password: changeme
+
+minio:
+  # -- Enable minio
+  # The default minio deployment is **NOT RECOMMENDED FOR PRODUCTION**.
+  enabled: true
+  fullnameOverride: minio
+  # -- minio mode, i.e. standalone or distributed or gateway
+  mode: standalone
+  # -- Number of minio containers running, needs to be tuned for production,
+  # see [minio limits documentation](https://github.com/minio/minio/blob/master/docs/minio-limits.md)
+  replicas: 1
+  users:
+    -
+      # -- S3 key for minio
+      accessKey: wellenplan
+      # -- S3 secret for minio
+      secretKey: changeme
+      # -- minio policy
+      policy: readwrite
